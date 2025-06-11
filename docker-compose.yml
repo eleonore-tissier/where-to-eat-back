@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+        POSTGRES_DB: where_to_eat_db
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: root
+    volumes:
+      - ./db-data/:/docker-entrypoint-initdb.d/
+
+volumes:
+  db-data:
