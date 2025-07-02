@@ -44,109 +44,57 @@ public class WhereToEatController {
         this.usersService = usersService;
     }
 
-    @GetMapping("/checkUser")
-    public ResponseEntity<User> checkUser(@RequestParam String firstName, @RequestParam String lastName, Model model) {
-        User userToLogIn = this.usersService.getUserByName(firstName, lastName);
-        if (userToLogIn != null) {
-            model.addAttribute("loggedUser", userToLogIn);
-            return new ResponseEntity<>(userToLogIn, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @GetMapping("/loggedUser")
-    private User getLoggedUser(@SessionAttribute("loggedUser") User user) {
-        return user;
-    }
-
     @GetMapping("/restaurants")
     public ResponseEntity<List<Restaurant>> getRestaurants(HttpSession session) {
-        if (this.checkAuthor(session)) {
-            return new ResponseEntity<>(this.restaurantsService.getRestaurants(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(this.restaurantsService.getRestaurants(), HttpStatus.OK);
     }
 
     @GetMapping("/findRestaurant")
     public ResponseEntity<Restaurant> findRestaurant(@RequestParam String name, HttpSession session) {
-        if (this.checkAuthor(session)) {
-            return new ResponseEntity<>(this.restaurantsService.findRestaurant(name), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(this.restaurantsService.findRestaurant(name), HttpStatus.OK);
     }
 
     @GetMapping("/restaurantsInSubmissions")
     public ResponseEntity<List<Restaurant>> getRestaurantsInSubmissions(HttpSession session) {
-        if (this.checkAuthor(session)) {
-            return new ResponseEntity<>(this.restaurantsService.getRestaurantsInSubmissions(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(this.restaurantsService.getRestaurantsInSubmissions(), HttpStatus.OK);
     }
 
     @GetMapping("submissions")
     public ResponseEntity<List<Submission>> getSubmissions(HttpSession session) {
-        if (this.checkAuthor(session)) {
-            return new ResponseEntity<>(this.submissionsService.getSubmissions(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(this.submissionsService.getSubmissions(), HttpStatus.OK);
     }
 
     @PostMapping("/submitRestaurant")
-    public ResponseEntity<Submission> submitRestaurant(@RequestParam String restaurantName, @RequestParam LocalDate eventDate, HttpSession session) {
-        if (this.checkAuthor(session)) {
-            this.submissionsService.submitRestaurant(restaurantName, ((User) session.getAttribute("loggedUser")).getId(), eventDate);
-            Restaurant restaurant = this.restaurantsService.findRestaurant(restaurantName);
-            this.restaurantsService.updateAlreadyDone(restaurant);
-            Submission submission = new Submission(restaurantName, ((User) session.getAttribute("loggedUser")).getId(), eventDate);
-            return new ResponseEntity<>(submission, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<Submission> submitRestaurant(@RequestParam String restaurantName, @RequestParam LocalDate eventDate) {
+        this.submissionsService.submitRestaurant(restaurantName, 1, eventDate);
+        Restaurant restaurant = this.restaurantsService.findRestaurant(restaurantName);
+        this.restaurantsService.updateAlreadyDone(restaurant);
+        Submission submission = new Submission(restaurantName,1, eventDate);
+        return new ResponseEntity<>(submission, HttpStatus.OK);
     }
 
     @GetMapping("/seasons")
     public ResponseEntity<List<Season>> getSeasons(HttpSession session) {
-        if (this.checkAuthor(session)) {
-            return new ResponseEntity<>(this.seasonsService.getSeasons(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(this.seasonsService.getSeasons(), HttpStatus.OK);
     }
 
     @GetMapping("/currentSeason")
     public ResponseEntity<Season> getCurrentSeason(HttpSession session) {
-        if (this.checkAuthor(session)) {
-            return new ResponseEntity<>(this.seasonsService.getCurrentSeason(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(this.seasonsService.getCurrentSeason(), HttpStatus.OK);
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers(HttpSession session) {
-        if (this.checkAuthor(session)) {
-            return new ResponseEntity<>(this.usersService.getUsers(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(this.usersService.getUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/user")
     public ResponseEntity<User> getUser(@RequestParam int id, HttpSession session) {
-        if (this.checkAuthor(session)) {
-            return new ResponseEntity<>(this.usersService.getUser(id), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(this.usersService.getUser(id), HttpStatus.OK);
     }
 
     @PutMapping("/updateUserPoints")
     public ResponseEntity<User> updateUserPoints(@RequestBody User user, HttpSession session) {
-        if (this.checkAuthor(session)) {
-            return new ResponseEntity<>(this.usersService.updateUserPoints(user), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    }
-
-    private boolean checkAuthor(HttpSession session) {
-        if (session.getAttribute("loggedUser") != null) {
-            return true;
-        }
-        return false;
+        return new ResponseEntity<>(this.usersService.updateUserPoints(user), HttpStatus.OK);
     }
 }
