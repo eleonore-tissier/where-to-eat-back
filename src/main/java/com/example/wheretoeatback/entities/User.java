@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Entity
 @Table(name = "users")
@@ -26,4 +28,13 @@ public class User {
         @Enumerated(EnumType.STRING)
         @Column(name = "role")
         private ERoles role;
+
+        @ManyToMany
+        @JoinTable(
+                name = "user_submission_vote",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "submission_id")
+        )
+        private List<Submission> votedSubmissions;
+
 }
