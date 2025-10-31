@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Entity
@@ -21,19 +22,23 @@ public class Submission {
     @Column(name = "nom_restaurant")
     private String restaurantName;
 
-    @Column(name = "user_id")
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "date")
     private LocalDate date;
 
+    @ManyToMany(mappedBy = "votedSubmissions")
+    private List<User> users;
+
     public Submission(
             String restaurantName,
-            int userId,
+            User user,
             LocalDate date
     ) {
         this.restaurantName = restaurantName;
-        this.userId = userId;
+        this.user = user;
         this.date = date;
     }
 }
