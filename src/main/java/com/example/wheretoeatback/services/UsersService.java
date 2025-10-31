@@ -27,7 +27,11 @@ public class UsersService {
         return this.usersRepository.findByFirstNameAndLastName(firstName, lastName);
     }
 
-    public User updateUserPoints(User user) {
+    public User addUser(User user) {
+        return this.usersRepository.save(user);
+    }
+
+    public User updateUser(User user) {
         if (this.usersRepository.findById(user.getId()) != null) {
             user.setPoints(user.getPoints() + 1);
         }
